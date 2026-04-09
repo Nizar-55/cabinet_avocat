@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Supprimer le rendez-vous" %} - {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-danger text-white">
+                <h4 class="card-title mb-0">
+                    <i class="fas fa-exclamation-triangle"></i> {% trans "Supprimer le rendez-vous" %}
+                </h4>
+            </div>
+            <div class="card-body">
+                <p class="lead">{% trans "Êtes-vous sûr de vouloir supprimer ce rendez-vous ?" %}</p>
+                <dl class="row">
+                    <dt class="col-sm-4">{% trans "Type" %}</dt>
+                    <dd class="col-sm-8">{{ rendezvous.get_type_display }}</dd>
+                    
+                    <dt class="col-sm-4">{% trans "Client" %}</dt>
+                    <dd class="col-sm-8">{{ rendezvous.client }}</dd>
+                    
+                    <dt class="col-sm-4">{% trans "Date" %}</dt>
+                    <dd class="col-sm-8">{{ rendezvous.date_debut|date:"d/m/Y H:i" }}</dd>
+                    
+                    <dt class="col-sm-4">{% trans "Statut" %}</dt>
+                    <dd class="col-sm-8">{{ rendezvous.get_statut_display }}</dd>
+                </dl>
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-circle"></i>
+                    {% trans "Cette action est irréversible." %}
+                </div>
+                <form method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash"></i> {% trans "Confirmer la suppression" %}
+                    </button>
+                    <a href="{% url 'rendezvous:detail' pk=rendezvous.pk %}" class="btn btn-secondary">
+                        <i class="fas fa-times"></i> {% trans "Annuler" %}
+                    </a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

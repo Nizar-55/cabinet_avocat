@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% load i18n crispy_forms_tags %}
+
+{% block title %}{{ title }} - {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="card-title mb-0">
+                    {% if dossier %}
+                        <i class="fas fa-edit"></i> {% trans "Modifier le dossier" %}
+                    {% else %}
+                        <i class="fas fa-plus"></i> {% trans "Nouveau dossier" %}
+                    {% endif %}
+                </h4>
+            </div>
+            <div class="card-body">
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-8">
+                            {{ form.titre|as_crispy_field }}
+                        </div>
+                        <div class="col-md-4">
+                            {{ form.statut|as_crispy_field }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            {{ form.client|as_crispy_field }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            {{ form.description|as_crispy_field }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-8">
+                            {{ form.notes|as_crispy_field }}
+                        </div>
+                        <div class="col-md-4">
+                            {{ form.montant_facture|as_crispy_field }}
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> {% trans "Enregistrer" %}
+                        </button>
+                        <a href="{% if dossier %}{% url 'dossiers:detail' reference=dossier.reference %}{% else %}{% url 'dossiers:list' %}{% endif %}" class="btn btn-secondary">
+                            <i class="fas fa-times"></i> {% trans "Annuler" %}
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

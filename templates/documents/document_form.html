@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% load i18n crispy_forms_tags %}
+
+{% block title %}{{ title }} - {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="card-title mb-0">
+                    {% if document %}
+                        <i class="fas fa-edit"></i> {% trans "Modifier le document" %}
+                    {% else %}
+                        <i class="fas fa-plus"></i> {% trans "Nouveau document" %}
+                    {% endif %}
+                </h4>
+            </div>
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data" novalidate>
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-8">
+                            {{ form.titre|as_crispy_field }}
+                        </div>
+                        <div class="col-md-4">
+                            {{ form.type_document|as_crispy_field }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            {{ form.dossier|as_crispy_field }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            {{ form.fichier|as_crispy_field }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            {{ form.description|as_crispy_field }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-8">
+                            {{ form.mots_cles|as_crispy_field }}
+                        </div>
+                        <div class="col-md-4">
+                            {{ form.confidentiel|as_crispy_field }}
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> {% trans "Enregistrer" %}
+                        </button>
+                        <a href="{% if document %}{% url 'documents:detail' reference=document.reference %}{% else %}{% url 'documents:list' %}{% endif %}" class="btn btn-secondary">
+                            <i class="fas fa-times"></i> {% trans "Annuler" %}
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

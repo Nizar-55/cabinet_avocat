@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{{ title }} - {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h2 mb-0">
+            <i class="fas fa-user"></i> {{ title }}
+        </h1>
+        {% if perms.utilisateurs.change_utilisateur or request.user == utilisateur %}
+        <div>
+            <a href="{% url 'utilisateurs:update' pk=utilisateur.pk %}" class="btn btn-primary">
+                <i class="fas fa-edit"></i> {% trans "Modifier le profil" %}
+            </a>
+            {% if request.user == utilisateur %}
+            <a href="{% url 'utilisateurs:password_change' %}" class="btn btn-warning">
+                <i class="fas fa-key"></i> {% trans "Changer le mot de passe" %}
+            </a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="row">
+        <!-- Photo de profil -->
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    {% if utilisateur.photo %}
+                    <img src="{{ utilisateur.photo.url }}" alt="{% trans 'Photo de profil' %}" class="img-fluid rounded-circle mb-3" style="max-width: 200px;">
+                    {% else %}
+                    <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 200px; height: 200px;">
+                        <i class="fas fa-user fa-5x text-secondary"></i>
+                    </div>
+                    {% endif %}
+                    <h3 class="card-title">{{ utilisateur.get_full_name }}</h3>
+                    <p class="text-muted">{{ utilisateur.get_role_display }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Informations détaillées -->
+        <div class="col-md-8">
+            <!-- Informations personnelles -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">{% trans "Informations personnelles" %}</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <p><strong>{% trans "Email" %}:</strong><br>{{ utilisateur.email }}</p>
+                        </div>
+                        <div class="col-sm-6">
+                            <p><strong>{% trans "Date de naissance" %}:</strong><br>{{ utilisateur.date_naissance|default:"-" }}</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <p><strong>{% trans "Téléphone" %}:</strong><br>{{ utilisateur.telephone|default:"-" }}</p>
+                        </div>
+                        <div class="col-sm-6">
+                            <p><strong>{% trans "Mobile" %}:</strong><br>{{ utilisateur.telephone_mobile|default:"-" }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Adresse -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">{% trans "Adresse" %}</h5>
+                </div>
+                <div class="card-body">
+                    <p>{{ utilisateur.adresse|default:"-" }}</p>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <p><strong>{% trans "Code postal" %}:</strong><br>{{ utilisateur.code_postal|default:"-" }}</p>
+                        </div>
+                        <div class="col-sm-4">
+                            <p><strong>{% trans "Ville" %}:</strong><br>{{ utilisateur.ville|default:"-" }}</p>
+                        </div>
+                        <div class="col-sm-4">
+                            <p><strong>{% trans "Pays" %}:</strong><br>{{ utilisateur.pays|default:"-" }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Informations professionnelles -->
+            {% if utilisateur.role == 'avocat' %}
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">{% trans "Informations professionnelles" %}</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <p><strong>{% trans "Spécialité" %}:</strong><br>{{ utilisateur.specialite|default:"-" }}</p>
+                        </div>
+                        <div class="col-sm-6">
+                            <p><strong>{% trans "Barreau" %}:</strong><br>{{ utilisateur.barreau|default:"-" }}</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <p><strong>{% trans "Numéro d'avocat" %}:</strong><br>{{ utilisateur.numero_avocat|default:"-" }}</p>
+                        </div>
+                        <div class="col-sm-6">
+                            <p><strong>{% trans "Date de prestation de serment" %}:</strong><br>{{ utilisateur.date_prestation_serment|default:"-" }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">{% trans "Informations professionnelles" %}</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <p><strong>{% trans "Département" %}:</strong><br>{{ utilisateur.departement|default:"-" }}</p>
+                        </div>
+                        <div class="col-sm-6">
+                            <p><strong>{% trans "Poste" %}:</strong><br>{{ utilisateur.poste|default:"-" }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %} 

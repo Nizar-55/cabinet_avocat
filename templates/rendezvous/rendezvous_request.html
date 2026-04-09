@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+
+{% block title %}{% trans "Demander un rendez-vous" %} - {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h1 class="h4 mb-0">
+                        <i class="fas fa-calendar-plus"></i> {% trans "Demander un rendez-vous" %}
+                    </h1>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info mb-4">
+                        <i class="fas fa-info-circle"></i> 
+                        {% trans "Choisissez vos préférences de rendez-vous. Nous vous confirmerons la disponibilité ou vous proposerons d'autres créneaux." %}
+                    </div>
+
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                {{ form.date_souhaitee|as_crispy_field }}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form.heure_souhaitee|as_crispy_field }}
+                            </div>
+                        </div>
+
+                        {{ form.type|as_crispy_field }}
+                        {{ form.sujet|as_crispy_field }}
+                        {{ form.description|as_crispy_field }}
+
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-paper-plane"></i> {% trans "Envoyer la demande" %}
+                            </button>
+                            <a href="{% url 'rendezvous:list' %}" class="btn btn-outline-secondary">
+                                <i class="fas fa-times"></i> {% trans "Annuler" %}
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Set min date to today
+    var dateInput = document.querySelector('input[type="date"]');
+    if (dateInput) {
+        var today = new Date().toISOString().split('T')[0];
+        dateInput.min = today;
+    }
+});
+</script>
+{% endblock %} 

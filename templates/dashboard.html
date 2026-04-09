@@ -1,0 +1,344 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Tableau de bord" %} - {{ block.super }}{% endblock %}
+
+{% block extra_css %}
+<style>
+.dashboard-header {
+    padding: 2rem 0;
+    margin-bottom: 2rem;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    border-radius: 12px;
+}
+
+.dashboard-header h1 {
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.stats-card {
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    transition: var(--transition);
+    overflow: hidden;
+}
+
+.stats-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.stats-card .card-body {
+    padding: 1.5rem;
+}
+
+.stats-card .icon-wrapper {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.2);
+    margin-bottom: 1rem;
+}
+
+.stats-card .stats-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.5rem;
+}
+
+.stats-card .stats-value {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0;
+    line-height: 1;
+}
+
+.content-card {
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    transition: var(--transition);
+    height: 100%;
+}
+
+.content-card:hover {
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.content-card .card-header {
+    background: none;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+    padding: 1.25rem 1.5rem;
+}
+
+.content-card .card-header h5 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+.content-card .card-body {
+    padding: 1.5rem;
+}
+
+.content-card .list-group-item {
+    border: none;
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+    transition: var(--transition);
+}
+
+.content-card .list-group-item:hover {
+    background-color: var(--light-bg);
+    transform: translateX(5px);
+}
+
+.content-card .card-footer {
+    background: none;
+    border-top: 1px solid rgba(0,0,0,0.1);
+    padding: 1.25rem 1.5rem;
+}
+
+.table-custom {
+    margin: 0;
+}
+
+.table-custom thead th {
+    background: var(--light-bg);
+    border: none;
+    padding: 1rem 1.5rem;
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+.table-custom tbody td {
+    padding: 1rem 1.5rem;
+    vertical-align: middle;
+}
+
+.table-custom tbody tr {
+    transition: var(--transition);
+}
+
+.table-custom tbody tr:hover {
+    background-color: var(--light-bg);
+}
+
+.btn-action {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    margin: 0 0.25rem;
+    transition: var(--transition);
+}
+
+.btn-action:hover {
+    transform: translateY(-2px);
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-header text-center">
+    <h1><i class="fas fa-tachometer-alt me-2"></i>{% trans "Tableau de bord" %}</h1>
+</div>
+
+<!-- Statistics Cards -->
+<div class="row g-4 mb-4">
+    <div class="col-md-3">
+        <div class="stats-card bg-primary text-white">
+            <div class="card-body">
+                <div class="icon-wrapper">
+                    <i class="fas fa-folder fa-lg"></i>
+                </div>
+                <h6 class="stats-title">{% trans "Dossiers actifs" %}</h6>
+                <h2 class="stats-value">{{ stats.dossiers_actifs }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stats-card bg-success text-white">
+            <div class="card-body">
+                <div class="icon-wrapper">
+                    <i class="fas fa-users fa-lg"></i>
+                </div>
+                <h6 class="stats-title">{% trans "Total clients" %}</h6>
+                <h2 class="stats-value">{{ stats.clients_total }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stats-card bg-warning text-white">
+            <div class="card-body">
+                <div class="icon-wrapper">
+                    <i class="fas fa-calendar fa-lg"></i>
+                </div>
+                <h6 class="stats-title">{% trans "RDV cette semaine" %}</h6>
+                <h2 class="stats-value">{{ stats.rendezvous_semaine }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stats-card bg-info text-white">
+            <div class="card-body">
+                <div class="icon-wrapper">
+                    <i class="fas fa-file fa-lg"></i>
+                </div>
+                <h6 class="stats-title">{% trans "Documents récents" %}</h6>
+                <h2 class="stats-value">{{ stats.documents_recents }}</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Upcoming Appointments -->
+    <div class="col-md-6">
+        <div class="content-card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-calendar me-2"></i>{% trans "Prochains rendez-vous" %}
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if prochains_rdv %}
+                <div class="list-group list-group-flush">
+                    {% for rdv in prochains_rdv %}
+                    <a href="{% url 'rendezvous:detail' pk=rdv.pk %}" class="list-group-item list-group-item-action">
+                        <div class="d-flex w-100 justify-content-between align-items-start">
+                            <div>
+                                <h6 class="mb-1 text-primary">{{ rdv.get_type_display }} - {{ rdv.client }}</h6>
+                                <p class="mb-1 text-muted">{{ rdv.sujet }}</p>
+                                <span class="badge bg-{{ rdv.get_statut_display|lower }}">{{ rdv.get_statut_display }}</span>
+                            </div>
+                            <small class="text-muted ms-2">{{ rdv.date_debut|date:"d/m/Y H:i" }}</small>
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
+                    <p class="text-muted mb-0">{% trans "Aucun rendez-vous à venir." %}</p>
+                </div>
+                {% endif %}
+            </div>
+            <div class="card-footer text-end">
+                <a href="{% url 'rendezvous:list' %}" class="btn btn-primary">
+                    <i class="fas fa-calendar me-2"></i>{% trans "Voir tous les rendez-vous" %}
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Documents -->
+    <div class="col-md-6">
+        <div class="content-card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-file me-2"></i>{% trans "Documents récents" %}
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if documents_recents %}
+                <div class="list-group list-group-flush">
+                    {% for doc in documents_recents %}
+                    <a href="{% url 'documents:detail' reference=doc.reference %}" class="list-group-item list-group-item-action">
+                        <div class="d-flex w-100 justify-content-between align-items-start">
+                            <div>
+                                <h6 class="mb-1 text-primary">{{ doc.titre }}</h6>
+                                <p class="mb-1 text-muted">{{ doc.get_type_document_display }}</p>
+                                <small class="text-muted">{{ doc.dossier.reference }} - {{ doc.dossier.titre }}</small>
+                            </div>
+                            <small class="text-muted ms-2">{{ doc.date_creation|date:"d/m/Y H:i" }}</small>
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="fas fa-file-times fa-3x text-muted mb-3"></i>
+                    <p class="text-muted mb-0">{% trans "Aucun document récent." %}</p>
+                </div>
+                {% endif %}
+            </div>
+            <div class="card-footer text-end">
+                <a href="{% url 'documents:list' %}" class="btn btn-primary">
+                    <i class="fas fa-file me-2"></i>{% trans "Voir tous les documents" %}
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Active Cases -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="content-card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-folder-open me-2"></i>{% trans "Dossiers actifs" %}
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if dossiers_actifs %}
+                <div class="table-responsive">
+                    <table class="table table-custom">
+                        <thead>
+                            <tr>
+                                <th>{% trans "Référence" %}</th>
+                                <th>{% trans "Titre" %}</th>
+                                <th>{% trans "Client" %}</th>
+                                <th>{% trans "Dernière modification" %}</th>
+                                <th class="text-end">{% trans "Actions" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for dossier in dossiers_actifs %}
+                            <tr>
+                                <td><strong>{{ dossier.reference }}</strong></td>
+                                <td>{{ dossier.titre }}</td>
+                                <td>{{ dossier.client }}</td>
+                                <td>{{ dossier.date_modification|date:"d/m/Y H:i" }}</td>
+                                <td class="text-end">
+                                    <a href="{% url 'dossiers:detail' reference=dossier.reference %}" class="btn btn-info btn-action" title="{% trans 'Voir' %}">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a href="{% url 'dossiers:update' reference=dossier.reference %}" class="btn btn-warning btn-action" title="{% trans 'Modifier' %}">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="fas fa-folder-open fa-3x text-muted mb-3"></i>
+                    <p class="text-muted mb-0">{% trans "Aucun dossier actif." %}</p>
+                </div>
+                {% endif %}
+            </div>
+            <div class="card-footer text-end">
+                <a href="{% url 'dossiers:list' %}" class="btn btn-primary">
+                    <i class="fas fa-folder me-2"></i>{% trans "Voir tous les dossiers" %}
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

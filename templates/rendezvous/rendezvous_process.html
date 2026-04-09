@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+
+{% block title %}{% trans "Traiter la demande de rendez-vous" %} - {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h1 class="h4 mb-0">
+                        <i class="fas fa-calendar-check"></i> {% trans "Traiter la demande de rendez-vous" %}
+                    </h1>
+                </div>
+                <div class="card-body">
+                    <div class="mb-4">
+                        <h5>{% trans "Détails de la demande" %}</h5>
+                        <dl class="row">
+                            <dt class="col-sm-4">{% trans "Client" %}</dt>
+                            <dd class="col-sm-8">{{ rendezvous.client }}</dd>
+                            
+                            <dt class="col-sm-4">{% trans "Type" %}</dt>
+                            <dd class="col-sm-8">{{ rendezvous.get_type_display }}</dd>
+                            
+                            <dt class="col-sm-4">{% trans "Date demandée" %}</dt>
+                            <dd class="col-sm-8">{{ rendezvous.date_debut|date:"d/m/Y H:i" }}</dd>
+                            
+                            <dt class="col-sm-4">{% trans "Sujet" %}</dt>
+                            <dd class="col-sm-8">{{ rendezvous.sujet }}</dd>
+                            
+                            <dt class="col-sm-4">{% trans "Description" %}</dt>
+                            <dd class="col-sm-8">{{ rendezvous.description|linebreaks }}</dd>
+                        </dl>
+                    </div>
+
+                    <div class="mb-4">
+                        <h5>{% trans "Actions" %}</h5>
+                        <div class="d-flex gap-2 mb-3">
+                            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#acceptModal">
+                                <i class="fas fa-check"></i> {% trans "Accepter" %}
+                            </button>
+                            <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#proposeModal">
+                                <i class="fas fa-calendar-alt"></i> {% trans "Proposer une autre date" %}
+                            </button>
+                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#refuseModal">
+                                <i class="fas fa-times"></i> {% trans "Refuser" %}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Accept Modal -->
+<div class="modal fade" id="acceptModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="accept">
+                <div class="modal-header">
+                    <h5 class="modal-title">{% trans "Accepter le rendez-vous" %}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="avocat">{% trans "Assigner à un avocat" %}</label>
+                        <select name="avocat" id="avocat" class="form-select" required>
+                            <option value="">{% trans "Sélectionner un avocat" %}</option>
+                            {% for avocat in avocats %}
+                            <option value="{{ avocat.id }}">{{ avocat.get_full_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Annuler" %}</button>
+                    <button type="submit" class="btn btn-success">{% trans "Accepter" %}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Propose Modal -->
+<div class="modal fade" id="proposeModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="propose">
+                <div class="modal-header">
+                    <h5 class="modal-title">{% trans "Proposer une autre date" %}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    {{ date_form|crispy }}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Annuler" %}</button>
+                    <button type="submit" class="btn btn-warning">{% trans "Proposer" %}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Refuse Modal -->
+<div class="modal fade" id="refuseModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="refuse">
+                <div class="modal-header">
+                    <h5 class="modal-title">{% trans "Refuser le rendez-vous" %}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    {{ refuse_form|crispy }}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Annuler" %}</button>
+                    <button type="submit" class="btn btn-danger">{% trans "Refuser" %}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+{% load i18n crispy_forms_tags %}
+
+{% block title %}{{ title }} - {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="card-title mb-0">
+                    {% if client %}
+                        <i class="fas fa-edit"></i> {% trans "Modifier le client" %}
+                    {% else %}
+                        <i class="fas fa-plus"></i> {% trans "Nouveau client" %}
+                    {% endif %}
+                </h4>
+            </div>
+            <div class="card-body">
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            {{ form.type_client|as_crispy_field }}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            {{ form.civilite|as_crispy_field }}
+                        </div>
+                        <div class="col-md-4">
+                            {{ form.nom|as_crispy_field }}
+                        </div>
+                        <div class="col-md-4">
+                            {{ form.prenom|as_crispy_field }}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            {{ form.email|as_crispy_field }}
+                        </div>
+                        <div class="col-md-3">
+                            {{ form.telephone|as_crispy_field }}
+                        </div>
+                        <div class="col-md-3">
+                            {{ form.telephone_secondaire|as_crispy_field }}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12">
+                            {{ form.adresse|as_crispy_field }}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            {{ form.code_postal|as_crispy_field }}
+                        </div>
+                        <div class="col-md-4">
+                            {{ form.ville|as_crispy_field }}
+                        </div>
+                        <div class="col-md-4">
+                            {{ form.pays|as_crispy_field }}
+                        </div>
+                    </div>
+
+                    <!-- Champs pour particulier -->
+                    <div class="particulier-fields">
+                        <div class="row">
+                            <div class="col-md-4">
+                                {{ form.date_naissance|as_crispy_field }}
+                            </div>
+                            <div class="col-md-4">
+                                {{ form.lieu_naissance|as_crispy_field }}
+                            </div>
+                            <div class="col-md-4">
+                                {{ form.nationalite|as_crispy_field }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                {{ form.profession|as_crispy_field }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Champs pour entreprise -->
+                    <div class="entreprise-fields">
+                        <div class="row">
+                            <div class="col-md-12">
+                                {{ form.raison_sociale|as_crispy_field }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                {{ form.numero_rc|as_crispy_field }}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form.ice|as_crispy_field }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12">
+                            {{ form.notes|as_crispy_field }}
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> {% trans "Enregistrer" %}
+                        </button>
+                        <a href="{% if client %}{% url 'clients:detail' pk=client.pk %}{% else %}{% url 'clients:list' %}{% endif %}" class="btn btn-secondary">
+                            <i class="fas fa-times"></i> {% trans "Annuler" %}
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const typeClientField = document.querySelector('[name="type_client"]');
+    const particulierFields = document.querySelector('.particulier-fields');
+    const entrepriseFields = document.querySelector('.entreprise-fields');
+
+    function toggleFields() {
+        if (typeClientField.value === 'PAR') {
+            particulierFields.style.display = 'block';
+            entrepriseFields.style.display = 'none';
+        } else {
+            particulierFields.style.display = 'none';
+            entrepriseFields.style.display = 'block';
+        }
+    }
+
+    typeClientField.addEventListener('change', toggleFields);
+    toggleFields(); // Initial state
+});
+</script>
+{% endblock %}
+
+{% endblock %} 

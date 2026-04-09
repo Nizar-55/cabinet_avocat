@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Journal d'activités" %} - {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h1 class="h3 mb-0">
+                <i class="fas fa-history"></i> {% trans "Journal d'activités" %}
+            </h1>
+            <a href="{% url 'admin_dashboard' %}" class="btn btn-primary">
+                <i class="fas fa-arrow-left"></i> {% trans "Retour au tableau de bord" %}
+            </a>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>{% trans "Date" %}</th>
+                            <th>{% trans "Utilisateur" %}</th>
+                            <th>{% trans "Action" %}</th>
+                            <th>{% trans "Description" %}</th>
+                            <th>{% trans "Modèle" %}</th>
+                            <th>{% trans "IP" %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for activity in activities %}
+                        <tr>
+                            <td>{{ activity.timestamp|date:"d/m/Y H:i" }}</td>
+                            <td>{{ activity.user }}</td>
+                            <td>
+                                <span class="badge {% if activity.action == 'CREATE' %}bg-success
+                                    {% elif activity.action == 'UPDATE' %}bg-info
+                                    {% elif activity.action == 'DELETE' %}bg-danger
+                                    {% else %}bg-secondary{% endif %}">
+                                    {{ activity.get_action_display }}
+                                </span>
+                            </td>
+                            <td>{{ activity.description }}</td>
+                            <td>{{ activity.target_model }}</td>
+                            <td>{{ activity.ip_address|default:"-" }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center py-3">
+                                {% trans "Aucune activité enregistrée" %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}Style Guide{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h1>Style Guide</h1>
+    <p class="lead">Reference for buttons, alerts, forms and cards.</p>
+
+    <h2>Buttons</h2>
+    <div class="mb-3">
+        <button class="btn btn-primary me-2">Primary</button>
+        <button class="btn btn-outline-primary me-2">Outline</button>
+        <button class="btn btn-secondary" disabled>Disabled</button>
+    </div>
+
+    <h2>Alerts</h2>
+    <div class="mb-3">
+        <div class="alert alert-success">Success alert example.</div>
+        <div class="alert alert-info">Info alert example.</div>
+        <div class="alert alert-warning">Warning alert example.</div>
+        <div class="alert alert-danger">Danger alert example.</div>
+    </div>
+
+    <h2>Form</h2>
+    <form class="card p-3 mb-3">
+        <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input class="form-control" placeholder="name@example.com">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Message</label>
+            <textarea class="form-control" rows="3"></textarea>
+        </div>
+        <button class="btn btn-primary">Submit</button>
+    </form>
+
+    <h2>Card</h2>
+    <div class="card">
+        <div class="card-header">Card Title</div>
+        <div class="card-body">This is a sample card body to preview spacing and typography.</div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% load i18n crispy_forms_tags %}
+
+{% block title %}{{ title }} - {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="card-title mb-0">
+                    {% if rendezvous %}
+                        <i class="fas fa-edit"></i> {% trans "Modifier le rendez-vous" %}
+                    {% else %}
+                        <i class="fas fa-plus"></i> {% trans "Nouveau rendez-vous" %}
+                    {% endif %}
+                </h4>
+            </div>
+            <div class="card-body">
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-6">
+                            {{ form.client|as_crispy_field }}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form.dossier|as_crispy_field }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            {{ form.type|as_crispy_field }}
+                        </div>
+                        <div class="col-md-4">
+                            {{ form.date_debut|as_crispy_field }}
+                        </div>
+                        <div class="col-md-4">
+                            {{ form.date_fin|as_crispy_field }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            {{ form.lieu|as_crispy_field }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            {{ form.sujet|as_crispy_field }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            {{ form.description|as_crispy_field }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            {{ form.notes|as_crispy_field }}
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> {% trans "Enregistrer" %}
+                        </button>
+                        <a href="{% if rendezvous %}{% url 'rendezvous:detail' pk=rendezvous.pk %}{% else %}{% url 'rendezvous:list' %}{% endif %}" class="btn btn-secondary">
+                            <i class="fas fa-times"></i> {% trans "Annuler" %}
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

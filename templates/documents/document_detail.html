@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{{ document.titre }} - {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h2 mb-0">
+        <i class="fas fa-file"></i> {{ document.titre }}
+        <small class="text-muted">{{ document.reference }}</small>
+    </h1>
+    <div class="btn-group">
+        <a href="{{ document.fichier.url }}" class="btn btn-success" target="_blank">
+            <i class="fas fa-download"></i> {% trans "Télécharger" %}
+        </a>
+        <a href="{% url 'documents:versions' reference=document.reference %}" class="btn btn-primary">
+            <i class="fas fa-code-branch"></i> {% trans "Versions" %}
+        </a>
+        <a href="{% url 'documents:update' reference=document.reference %}" class="btn btn-warning">
+            <i class="fas fa-edit"></i> {% trans "Modifier" %}
+        </a>
+        <a href="{% url 'documents:delete' reference=document.reference %}" class="btn btn-danger">
+            <i class="fas fa-trash"></i> {% trans "Supprimer" %}
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-info-circle"></i> {% trans "Informations générales" %}
+                </h5>
+            </div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-3">{% trans "Type" %}</dt>
+                    <dd class="col-sm-9">{{ document.get_type_document_display }}</dd>
+
+                    <dt class="col-sm-3">{% trans "Dossier" %}</dt>
+                    <dd class="col-sm-9">
+                        {% if document.dossier %}
+                        <a href="{% url 'dossiers:detail' reference=document.dossier.reference %}">
+                            {{ document.dossier.reference }} - {{ document.dossier.titre }}
+                        </a>
+                        {% else %}
+                        -
+                        {% endif %}
+                    </dd>
+
+                    <dt class="col-sm-3">{% trans "Statut" %}</dt>
+                    <dd class="col-sm-9">
+                        <span class="badge {% if document.statut == 'BR' %}bg-warning
+                                         {% elif document.statut == 'RE' %}bg-info
+                                         {% elif document.statut == 'VA' %}bg-success
+                                         {% else %}bg-secondary{% endif %}">
+                            {{ document.get_statut_display }}
+                        </span>
+                    </dd>
+
+                    <dt class="col-sm-3">{% trans "Version" %}</dt>
+                    <dd class="col-sm-9">v{{ document.version }}</dd>
+
+                    <dt class="col-sm-3">{% trans "Créé par" %}</dt>
+                    <dd class="col-sm-9">{{ document.createur }}</dd>
+
+                    <dt class="col-sm-3">{% trans "Date de création" %}</dt>
+                    <dd class="col-sm-9">{{ document.date_creation|date:"d/m/Y H:i" }}</dd>
+
+                    <dt class="col-sm-3">{% trans "Dernière modification" %}</dt>
+                    <dd class="col-sm-9">{{ document.date_modification|date:"d/m/Y H:i" }}</dd>
+
+                    {% if document.validateur %}
+                    <dt class="col-sm-3">{% trans "Validé par" %}</dt>
+                    <dd class="col-sm-9">{{ document.validateur }}</dd>
+
+                    <dt class="col-sm-3">{% trans "Date de validation" %}</dt>
+                    <dd class="col-sm-9">{{ document.date_validation|date:"d/m/Y H:i" }}</dd>
+                    {% endif %}
+
+                    <dt class="col-sm-3">{% trans "Confidentiel" %}</dt>
+                    <dd class="col-sm-9">
+                        {% if document.confidentiel %}
+                        <i class="fas fa-lock text-danger"></i> {% trans "Oui" %}
+                        {% else %}
+                        <i class="fas fa-unlock text-success"></i> {% trans "Non" %}
+                        {% endif %}
+                    </dd>
+
+                    <dt class="col-sm-3">{% trans "Taille" %}</dt>
+                    <dd class="col-sm-9">
+                        {% if document.taille_fichier < 1024 %}
+                            {{ document.taille_fichier }} B
+                        {% elif document.taille_fichier < 1048576 %}
+                            {{ document.taille_fichier|divisibleby:"1024"|floatformat:1 }} KB
+                        {% else %}
+                            {{ document.taille_fichier|divisibleby:"1048576"|floatformat:1 }} MB
+                        {% endif %}
+                    </dd>
+                </dl>
+            </div>
+        </div>
+
+        {% if document.description %}
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-align-left"></i> {% trans "Description" %}
+                </h5>
+            </div>
+            <div class="card-body">
+                {{ document.description|linebreaks }}
+            </div>
+        </div>
+        {% endif %}
+
+        {% if document.mots_cles %}
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-tags"></i> {% trans "Mots-clés" %}
+                </h5>
+            </div>
+            <div class="card-body">
+                {% for mot in document.mots_cles.split %} 
+                <span class="badge bg-info">{{ mot }}</span>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-code-branch"></i> {% trans "Dernières versions" %}
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if document.versions.exists %}
+                <div class="list-group">
+                    {% for version in document.versions.all|slice:":5" %}
+                    <div class="list-group-item">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1">v{{ version.numero_version }}</h6>
+                            <small>{{ version.date_creation|date:"d/m/Y H:i" }}</small>
+                        </div>
+                        <p class="mb-1">{{ version.commentaire|truncatewords:20 }}</p>
+                        <small class="text-muted">{{ version.createur }}</small>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="text-muted mb-0">{% trans "Aucune version antérieure." %}</p>
+                {% endif %}
+            </div>
+            <div class="card-footer">
+                <a href="{% url 'documents:version_create' reference=document.reference %}" class="btn btn-primary btn-sm">
+                    <i class="fas fa-plus"></i> {% trans "Nouvelle version" %}
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
