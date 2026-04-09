@@ -18,6 +18,7 @@
     --transition-speed: 200ms;
     --transition: var(--transition-speed) ease;
     --font-family: 'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    --footer-height: 72px;
 }
 
 /* Base reset */
@@ -33,6 +34,7 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    padding-bottom: var(--footer-height);
 }
 
 /* Make the main content grow so the footer stays at the bottom */
@@ -88,6 +90,15 @@ p, label, small { color: #334155; line-height:1.5 }
 .alert-info { background: #eff6ff; border-color: rgba(59,130,246,0.12); color: #1e3a8a; }
 
 .footer { background: var(--primary-color); color: #e6eefc; padding: 1.5rem 0; margin-top: 0; }
+
+/* Fixed footer fallback for short pages (keeps it at viewport bottom) */
+.footer {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1000;
+}
 .footer a { color: #f8fafc; text-decoration: none; }
 
 /* Home / Hero */
