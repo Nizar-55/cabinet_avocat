@@ -109,6 +109,9 @@ a:focus, button:focus, .nav-link:focus { outline: 3px solid rgba(var(--primary-c
 @keyframes fadeInUp { from { opacity: 0; transform: translateY(12px); } to { opacity:1; transform:none; } }
 .fade-in { animation: fadeInUp 300ms ease both; }
 
+/* Ensure footer never shrinks and remains after main */
+.footer { flex-shrink: 0; }
+
 /* Hide duplicate login/register buttons outside navbar (kept minimal) */
 .btn-login:not(.navbar .btn-login),
 .btn-register:not(.navbar .btn-register),
