@@ -18,6 +18,7 @@ from django.utils.translation import gettext_lazy as _
 from django.contrib.auth import login
 from datetime import timedelta
 from .models import User, SystemAlert, ActivityLog
+import traceback
 
 @login_required
 def dashboard(request):
@@ -38,7 +39,7 @@ def dashboard(request):
                         statut='EC'
                     ).count(),
                     'clients_total': Client.objects.filter(
-                        dossier__avocat=request.user
+                        dossiers__avocat=request.user
                     ).distinct().count(),
                     'rendezvous_jour': Rendezvous.objects.filter(
                         date_debut__date=now.date(),
@@ -72,7 +73,7 @@ def dashboard(request):
                 
                 # Derniers clients ajoutés
                 derniers_clients = Client.objects.filter(
-                    dossier__avocat=request.user
+                    dossiers__avocat=request.user
                 ).distinct().order_by('-date_creation')[:5]
                 
                 context.update({
@@ -233,7 +234,7 @@ def home(request):
             if request.user.is_avocat:
                 stats = {
                     'dossiers_actifs': Dossier.objects.filter(avocat=request.user, statut='EC').count(),
-                    'clients_total': Client.objects.filter(dossier__avocat=request.user).distinct().count(),
+                    'clients_total': Client.objects.filter(dossiers__avocat=request.user).distinct().count(),
                     'rendezvous_jour': Rendezvous.objects.filter(date_debut__date=now.date(), avocat=request.user).count(),
                     'documents_attente': Document.objects.filter(dossier__avocat=request.user, statut='AT').count()
                 }
@@ -296,6 +297,8 @@ def home(request):
         }
         return render(request, 'home.html', context)
     except Exception as e:
+        # Log the traceback to console for debugging
+        traceback.print_exc()
         messages.error(request, _("Une erreur est survenue lors du chargement de la page d'accueil."))
         return render(request, 'home.html', {'error': True})
 

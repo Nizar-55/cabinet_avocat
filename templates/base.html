@@ -41,26 +41,26 @@
                     <ul class="navbar-nav me-auto">
                         {% if user.is_avocat or user.is_secretaire %}
                             <li class="nav-item">
-                                <a class="nav-link {% if request.resolver_match.namespace == 'dossiers' %}active{% endif %}" 
+                                <a class="nav-link {% if request.resolver_match and request.resolver_match.namespace == 'dossiers' %}active{% endif %}" 
                                    href="{% url 'dossiers:list' %}">
                                     <i class="fas fa-folder"></i> {% trans "Dossiers" %}
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link {% if request.resolver_match.namespace == 'clients' %}active{% endif %}" 
+                                <a class="nav-link {% if request.resolver_match and request.resolver_match.namespace == 'clients' %}active{% endif %}" 
                                    href="{% url 'clients:list' %}">
                                     <i class="fas fa-users"></i> {% trans "Clients" %}
                                 </a>
                             </li>
                         {% endif %}
                         <li class="nav-item">
-                            <a class="nav-link {% if request.resolver_match.namespace == 'rendezvous' %}active{% endif %}" 
+                            <a class="nav-link {% if request.resolver_match and request.resolver_match.namespace == 'rendezvous' %}active{% endif %}" 
                                href="{% url 'rendezvous:list' %}">
                                 <i class="fas fa-calendar"></i> {% trans "Rendez-vous" %}
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link {% if request.resolver_match.namespace == 'documents' %}active{% endif %}" 
+                            <a class="nav-link {% if request.resolver_match and request.resolver_match.namespace == 'documents' %}active{% endif %}" 
                                href="{% url 'documents:list' %}">
                                 <i class="fas fa-file"></i> {% trans "Documents" %}
                             </a>
